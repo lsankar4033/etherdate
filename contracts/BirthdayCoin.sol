@@ -1,28 +1,24 @@
 pragma solidity ^0.4.4;
 
-// import './NFT.sol';
-
 // TODO: Consider making this thing abide by ERC721
 contract BirthdayCoin  {
 
   // TODO: Refine
   uint constant startingPrice = 1 finney;
 
-  // There are 366 coins:
+  // There are 366 coins (1-indexed so that 0 can be used as a non-assignment flag):
   // day | id
-  // 1/1 | 0
-  // 1/2 | 1
-  // 1/3 | 2
+  // 1/1 | 1
   // ...
-  // 12/31 | 364
-  // 2/29 | 365 (leap day)
+  // 12/31 | 365
+  // 2/29 | 366 (leap day)
   mapping(uint => address) public coinToOwner;
   mapping(uint => string) public coinToMessage;
   mapping(uint => uint) public coinToPrice; // TODO: for clarity, maybe this should reflect the initial price too..
   mapping(address => uint) _pendingWithdrawals;
 
-  // highest price coins
-
+  // sorted (lowest-highest) array of top 10 coin IDs by price
+  uint[10] _top10Coins;
 
   // May not need this
   address public creator;
@@ -33,10 +29,9 @@ contract BirthdayCoin  {
 
   // TODO: (maybe) add fee to creator
   function buyBirthday(uint id, string message) public payable returns (bool) {
-    require(id >= 0 && id < 366);
+    require(id >= 1 && id <= 366);
 
-    // May be cleaner to structure price/owner/message as struct and condition creator check below on
-    // whether that struct is defined
+    // Janky logic that's necessary because maps aren't initialized for performance reasons
     uint price;
     address owner;
     if (coinToPrice[id] == 0) {
@@ -52,6 +47,7 @@ contract BirthdayCoin  {
       coinToOwner[id] = msg.sender;
       coinToMessage[id] = message;
       coinToPrice[id] = _determineNewPrice(msg.value);
+      _updateTop10Coins(id);
     } else {
       return false;
     }
@@ -62,10 +58,39 @@ contract BirthdayCoin  {
     return amountPaid * 2;
   }
 
-  // For the 'high score' list
-  function getHighestPriceCoins(uint numCoins) public view returns (uint[]) {
+  // Do an insertion sort into the list and then unshift elements 'behind it'
+  function _updateTop10Coins(uint newCoinId) private {
+    uint newPrice = coinToPrice[newCoinId];
 
+    uint i = 0;
+    while (i < 10 && (_top10Coins[i] == 0 || newPrice > coinToPrice[_top10Coins[i]])) {
+      i++;
+    }
 
+    // don't need to change anything if new price less than all of top 10
+    if (i > 0) {
+      uint insertionIndex = i - 1;
+      uint idToInsert = newCoinId;
+      uint tmp;
+
+      // because 0 represents non-coin, if we ever have to insert a 0, rest of array is 0s, so can break out
+      // of loop
+      while (insertionIndex >= 0 && idToInsert != 0) {
+        tmp = _top10Coins[insertionIndex];
+        _top10Coins[insertionIndex] = idToInsert;
+
+        idToInsert = tmp;
+        insertionIndex--;
+      }
+    }
+  }
+
+  function getCoinData(uint id) public view returns (address, string, uint) {
+    return (coinToOwner[id], coinToMessage[id], coinToPrice[id]);
+  }
+
+  function getTop10Coins() public view returns (uint[10]) {
+    return _top10Coins;
   }
 
   // Withdraw split out to avoid re-entrancey if buyBirthday fails on send
