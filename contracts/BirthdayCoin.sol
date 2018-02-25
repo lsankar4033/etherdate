@@ -21,6 +21,9 @@ contract BirthdayCoin  {
   mapping(uint => uint) public coinToPrice; // TODO: for clarity, maybe this should reflect the initial price too..
   mapping(address => uint) _pendingWithdrawals;
 
+  // highest price coins
+
+
   // May not need this
   address public creator;
 
@@ -59,6 +62,13 @@ contract BirthdayCoin  {
     return amountPaid * 2;
   }
 
+  // For the 'high score' list
+  function getHighestPriceCoins(uint numCoins) public view returns (uint[]) {
+
+
+  }
+
+  // Withdraw split out to avoid re-entrancey if buyBirthday fails on send
   function withdraw() public {
     uint amount = _pendingWithdrawals[msg.sender];
     _pendingWithdrawals[msg.sender] = 0; // zero out withdrawal first to protect against re-entrancy

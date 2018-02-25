@@ -29,7 +29,8 @@ App = {
       // Set the provider for our contract
       App.contracts.BirthdayCoin.setProvider(App.web3Provider);
 
-      // TODO: any logic to mark all known birthdays
+      // Populate high scores table
+      App.populateHighPricesTable();
     });
 
     return App.bindEvents();
@@ -37,6 +38,15 @@ App = {
 
   bindEvents: function() {
     // TODO
+  },
+
+  populateHighPricesTable: function() {
+    App.contracts.BirthdayCoin.deployed().then(function(instance) {
+      //return instance.
+      // adoptionInstance = instance;
+
+      // return adoptionInstance.getAdopters.call();
+    })
   },
 
   // TODO: binding for buying a birthday or withdrawing balance
