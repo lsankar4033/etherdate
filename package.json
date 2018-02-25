@@ -1,0 +1,29 @@
+{
+  "name": "birthdaycoin",
+  "version": "1.0.0",
+  "description": "The best possible birthday gift",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "fsevents": "^1.1.3"
+  },
+  "devDependencies": {
+    "lite-server": "^2.3.0"
+  },
+  "scripts": {
+    "dev": "lite-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsankar4033/birthdaycoin.git"
+  },
+  "author": "lsankar4033",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lsankar4033/birthdaycoin/issues"
+  },
+  "homepage": "https://github.com/lsankar4033/birthdaycoin#readme"
+}
