@@ -1,4 +1,7 @@
 App = {
+  // TODO: This really shouldn't be checked in... Should figure out how to put this in a config file.
+  devBirthdayCoinAddress = "0x23e84570f7b28ad0d5e5545d398009194a8734f3",
+
   web3Provider: null,
   contracts: {},
 
@@ -22,31 +25,32 @@ App = {
 
   initContract: function() {
     $.getJSON('BirthdayCoin.json', function(data) {
+      // TODO: Figure out how to propagate this down properly...
+      var devContractAddr = "0x23e84570f7b28ad0d5e5545d398009194a8734f3"
+
       // Get the necessary contract artifact file and instantiate it with truffle-contract
-      var BirthdayCoinArtifact= data;
-      App.contracts.BirthdayCoin = TruffleContract(BirthdayCoinArtifact);
+      var BirthdayCoinArtifact = data;
 
-      // Set the provider for our contract
-      App.contracts.BirthdayCoin.setProvider(App.web3Provider);
-
-      // Populate high scores table
-      App.populateHighPricesTable();
+      var abstractContract = TruffleContract(BirthdayCoinArtifact);
+      abstractContract.setProvider(App.web3Provider);
+      abstractContract.at(devBirthdayCoinAddress).then(function (contract) {
+        App.contracts.BirthdayCoin = contract;
+        App.populateHighPricesTable();
+      });
     });
 
     return App.bindEvents();
   },
 
-  bindEvents: function() {
-    // TODO
+  populateHighPricesTable: function() {
+    App.contracts.BirthdayCoin.getTop10Coins().then(function (top10Coins) {
+      // TODO: Populate the rows in html!
+      console.log(top10Coins);
+    });
   },
 
-  populateHighPricesTable: function() {
-    App.contracts.BirthdayCoin.deployed().then(function(instance) {
-      //return instance.
-      // adoptionInstance = instance;
-
-      // return adoptionInstance.getAdopters.call();
-    })
+  bindEvents: function() {
+    // TODO
   },
 
   // TODO: binding for buying a birthday or withdrawing balance
