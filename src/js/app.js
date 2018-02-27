@@ -27,17 +27,16 @@ App = {
   initContract: function() {
     $.getJSON('BirthdayCoin.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
-      var BirthdayCoinArtifact = data;
-
-      var abstractContract = TruffleContract(BirthdayCoinArtifact);
+      const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
       abstractContract.at(App.devBirthdayCoinAddress).then(function (contract) {
         App.contracts.BirthdayCoin = contract;
+
+        // initialize components
         App.populateHighPricesTable();
+        App.initializeDatepicker();
       });
     });
-
-    return App.bindEvents();
   },
 
   populateHighPricesTable: async function() {
@@ -102,11 +101,30 @@ App = {
     }
   },
 
-  bindEvents: function() {
-    // TODO
+  initializeDatepicker: function () {
+    $('#datetimepicker').on('dp.change', App.handleDateChange);
+
+    // Use a year (2020) with a leap day
+    const startDate = new Date(2020, 0, 1);
+    const endDate = new Date(2020, 12, 31);
+
+    // TODO: Disable level changer
+    // TODO: Disable days of week column headings
+    $('#datetimepicker').datetimepicker({
+      format: 'MM/DD',
+      dayViewHeaderFormat: 'MMMM',
+      minDate: startDate,
+      maxDate: endDate,
+    });
   },
 
-  // TODO: binding for buying a birthday or withdrawing balance
+  handleDateChange: async function (e) {
+    const momentDate = e.date;
+    const coinId = momentDate.dayOfYear();
+    const coinData = await App.contracts.BirthdayCoin.getCoinData(coinId);
+
+    console.log(coinData);
+  }
 
 };
 
