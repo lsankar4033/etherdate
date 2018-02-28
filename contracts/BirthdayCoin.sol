@@ -5,6 +5,7 @@ contract BirthdayCoin  {
 
   // TODO: Refine
   uint constant startingPrice = 1 finney;
+  string constant defaultMessage = "For Sale!!!";
 
   // There are 366 coins (1-indexed so that 0 can be used as a non-assignment flag):
   // day | id
@@ -31,17 +32,7 @@ contract BirthdayCoin  {
   function buyBirthday(uint id, string message) public payable returns (bool) {
     require(id >= 1 && id <= 366);
 
-    // Janky logic that's necessary because maps aren't initialized for performance reasons
-    uint price;
-    address owner;
-    if (coinToPrice[id] == 0) {
-      price = startingPrice;
-      owner = creator;
-    } else {
-      price = coinToPrice[id];
-      owner = coinToOwner[id];
-    }
-
+    var (owner, prevMessage, price) = _getCoinData(id);
     if (msg.value > price) {
       _pendingWithdrawals[owner] += msg.value;
       coinToOwner[id] = msg.sender;
@@ -85,8 +76,26 @@ contract BirthdayCoin  {
     }
   }
 
+  // NOTE: Maybe this should return a 'nil'-type value
   function getCoinData(uint id) public view returns (address, string, uint) {
-    return (coinToOwner[id], coinToMessage[id], coinToPrice[id]);
+    return _getCoinData(id);
+  }
+
+  function _getCoinData(uint id) private view returns (address, string, uint) {
+    address owner;
+    string memory message;
+    uint price;
+    if (coinToPrice[id] == 0) {
+      owner = creator;
+      message = defaultMessage;
+      price = startingPrice;
+    } else {
+      owner = coinToOwner[id];
+      message = coinToMessage[id];
+      price = coinToPrice[id];
+    }
+
+    return (owner, message, price);
   }
 
   function getTop10Coins() public view returns (uint[10]) {

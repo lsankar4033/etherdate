@@ -1,6 +1,6 @@
 App = {
   // TODO: This really shouldn't be checked in... Should figure out how to put this in a config file.
-  devBirthdayCoinAddress: '0x8f0483125fcb9aaaefa9209d8e9d7b9c8b9fb90f',
+  devBirthdayCoinAddress: '0x82d50ad3c1091866e258fd0f1a7cc9674609d254',
 
   web3Provider: null,
   contracts: {},
@@ -114,7 +114,7 @@ App = {
       format: 'MM/DD',
       dayViewHeaderFormat: 'MMMM',
       minDate: startDate,
-      maxDate: endDate,
+      maxDate: endDate
     });
   },
 
@@ -122,6 +122,10 @@ App = {
     const momentDate = e.date;
     const coinId = momentDate.dayOfYear();
     const coinData = await App.contracts.BirthdayCoin.getCoinData(coinId);
+
+    $('#selected-date input#owner').attr('placeholder', coinData[0]);
+    $('#selected-date input#message').attr('placeholder', coinData[1]);
+    $('#selected-date input#price').attr('placeholder', coinData[2]);
 
     console.log(coinData);
   }
