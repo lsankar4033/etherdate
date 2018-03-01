@@ -42,7 +42,6 @@ contract BirthdayCoin  {
       _updateTop10Coins(id);
       return true;
     } else {
-      // TODO: Send value back?
       return false;
     }
   }
@@ -52,12 +51,13 @@ contract BirthdayCoin  {
     return amountPaid * 2;
   }
 
+  // TODO: Handle the case where we're re-inserting an ID!
   // Do an insertion sort into the list and then unshift elements 'behind it'
   function _updateTop10Coins(uint newCoinId) private {
     uint newPrice = coinToPrice[newCoinId];
 
     uint i = 0;
-    while (i < 10 && (_top10Coins[i] == 0 || newPrice > coinToPrice[_top10Coins[i]])) {
+    while (i < 10 && (_top10Coins[i] == 0 || newPrice >= coinToPrice[_top10Coins[i]])) {
       i++;
     }
 
@@ -73,8 +73,13 @@ contract BirthdayCoin  {
         tmp = _top10Coins[insertionIndex];
         _top10Coins[insertionIndex] = idToInsert;
 
-        idToInsert = tmp;
         insertionIndex--;
+
+        if (tmp == idToInsert) { // duplicate coin
+          idToInsert = _top10Coins[insertionIndex];
+        } else {
+          idToInsert = tmp;
+        }
       }
     }
   }

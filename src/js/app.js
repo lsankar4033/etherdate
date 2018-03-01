@@ -1,9 +1,42 @@
+const devBirthdayCoinAddress = '0xc8c03647d39a96f02f6ce8999bc22493c290e734';
+
+// NOTE: May want to move all date handling logic to its own file...
+const monthDays = [
+  [1, 31],
+  [2, 28],
+  [3, 31],
+  [4, 30],
+  [5, 31],
+  [6, 30],
+  [7, 31],
+  [8, 31],
+  [9, 30],
+  [10, 31],
+  [11, 30],
+  [12, 31]
+]
+
+// NOTE: in the future may want to use intermediate date type
+function coinIdToDateStr(id) {
+  if (id > 366 || id < 1) {
+    // TODO: Change to exception/log handling
+    return 'NOT A DATE';
+  } else if (id == 366) {
+    return '2/29';
+  } else {
+    for (monthDay of monthDays) {
+      if (id <= monthDay[1]) {
+        return `${monthDay[0]}/${id}`;
+      }
+
+      id -= monthDay[1];
+    }
+  }
+}
+
 // TODO: Add way to withdraw!
 // TODO: Better display prices (i.e. as eth)
 App = {
-  // TODO: This really shouldn't be checked in... Should figure out how to put this in a config file.
-  devBirthdayCoinAddress: '0xc8c03647d39a96f02f6ce8999bc22493c290e734',
-
   web3Provider: null,
   contracts: {},
 
@@ -30,18 +63,20 @@ App = {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
-      abstractContract.at(App.devBirthdayCoinAddress).then(function (contract) {
+      abstractContract.at(devBirthdayCoinAddress).then(function (contract) {
         App.contracts.BirthdayCoin = contract;
 
         // initialize components
-        App.populateHighPricesTable();
+        App.reloadHighPricesTable();
         App.initializeDatepicker();
         $('#buy-button').click(App.buyCoin);
       });
     });
   },
 
-  populateHighPricesTable: async function() {
+  reloadHighPricesTable: async function() {
+    $('#high-prices-table tbody').empty();
+
     const top10Coins = await App.contracts.BirthdayCoin.getTop10Coins();
     const topCoinIds = top10Coins.map(x => x.toNumber()).filter(x => x > 0);
 
@@ -57,50 +92,16 @@ App = {
     for (coinData of topCoinData) {
       html += '<tr>';
 
-      var dateStr = App.coinIdToDateStr(coinData[3]);
+      var dateStr = coinIdToDateStr(coinData[3]);
       html += `<td>${dateStr}</td>`;
-      html += `<td>${coinData[0]}</td>`;
       html += `<td>${coinData[1]}</td>`;
       html += `<td>${coinData[2].toNumber()}</td>`;
+      html += `<td>${coinData[0]}</td>`;
 
       html += '</tr>';
     }
 
     $('#high-prices-table tbody').append(html);
-  },
-
-  // NOTE: May want to move all date handling logic to its own file...
-  monthDays: [
-    [1, 31],
-    [2, 28],
-    [3, 31],
-    [4, 30],
-    [5, 31],
-    [6, 30],
-    [7, 31],
-    [8, 31],
-    [9, 30],
-    [10, 31],
-    [11, 30],
-    [12, 31]
-  ],
-
-  // NOTE: in the future may want to use intermediate date type
-  coinIdToDateStr: function (id) {
-    if (id > 366 || id < 1) {
-      // TODO: Change to exception/log handling
-      return 'NOT A DATE';
-    } else if (id == 366) {
-      return '2/29';
-    } else {
-      for (monthDay of App.monthDays) {
-        if (id <= monthDay[1]) {
-          return `${monthDay[0]}/${id}`;
-        }
-
-        id -= monthDay[1];
-      }
-    }
   },
 
   initializeDatepicker: function () {
@@ -122,28 +123,32 @@ App = {
 
   handleDateChange: async function (e) {
     const momentDate = e.date;
-    const coinId = momentDate.dayOfYear();
-    const coinData = await App.contracts.BirthdayCoin.getCoinData(coinId);
+    await App._handleDateChange(momentDate.dayOfYear());
+  },
+
+  _handleDateChange: async function (id) {
+    const coinData = await App.contracts.BirthdayCoin.getCoinData(id);
 
     $('#selected-date input#owner').attr('placeholder', coinData[0]);
     $('#selected-date input#message').attr('placeholder', coinData[1]);
     $('#selected-date input#price').attr('placeholder', coinData[2].toNumber());
-    $('#selected-date input#coin-id').val(coinId);
+    $('#selected-date input#coin-id').val(id);
   },
 
   // TODO: if false is returned from smart contract, indicate this to user
   buyCoin: async function (e) {
     coinId = $('#selected-date input#coin-id').val();
     price = $('#selected-date input#price').attr('placeholder');
+    newMessage = $('#selected-date input#new-message').val();
 
-    // TODO: make it so that new message is user input (maybe also include input for price user is willing to
-    // pay
-    const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, 'TEST MESSAGE', {value: price});
-
-    // TODO: Reload all panes
+    // TODO: Conditional logic depending on whether or not buy was successful
+    const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, newMessage, {value: price});
 
     // TODO: remove
     console.log(didBuy);
+
+    await App._handleDateChange(coinId);
+    await App.reloadHighPricesTable();
   }
 };
 
