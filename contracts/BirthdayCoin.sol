@@ -2,7 +2,7 @@ pragma solidity ^0.4.4;
 
 contract BirthdayCoin  {
   uint constant startingPrice = 20 finney;
-  string constant startingMessage = "What's special about today?";
+  string constant startingMessage = "Nothing to see here...";
 
   // There are 366 coins (1-indexed so that 0 can be used as a non-assignment flag):
   // day | id
@@ -47,7 +47,7 @@ contract BirthdayCoin  {
   // Extract fee to be paid to contract creator. Fee is defined entirely in this contract! Can be changed in
   // future versions
   function _extractFee(uint amountPaid) private pure returns (uint, uint) {
-    uint fee = amountPaid / 100;
+    uint fee = amountPaid / 1000;
     return (fee, amountPaid - fee);
   }
 

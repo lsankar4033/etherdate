@@ -1,5 +1,6 @@
-// TODO: Add in mainnet, testnet versions!
+// TODO: Put these in a config that's determined by env!
 const devBirthdayCoinAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
+const rinkebyBirthdayCoinAddress = '0x5094bd12f227df04905918dc431e822e5d235e64';
 
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
@@ -34,6 +35,11 @@ function coinIdToDateStr(id) {
   }
 }
 
+function getEther(wei) {
+  return wei / (10 ** 18);
+}
+
+// TODO: Notice that ethereum txes take tiem after buy
 // TODO: Display prices better (i.e. as eth)
 App = {
   web3Provider: null,
@@ -62,7 +68,7 @@ App = {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
-      abstractContract.at(devBirthdayCoinAddress).then(function (contract) {
+      abstractContract.at(rinkebyBirthdayCoinAddress).then(function (contract) {
         App.contracts.BirthdayCoin = contract;
 
         // initialize components
@@ -98,8 +104,7 @@ App = {
       var dateStr = coinIdToDateStr(coinData[3]);
       html += `<td>${dateStr}</td>`;
       html += `<td>${coinData[1]}</td>`;
-      html += `<td>${coinData[2].toNumber()}</td>`;
-      html += `<td>${coinData[0]}</td>`;
+      html += `<td>${getEther(coinData[2].toNumber())}</td>`;
 
       html += '</tr>';
     }
@@ -135,7 +140,7 @@ App = {
 
     $('#selected-date input#owner').attr('placeholder', coinData[0]);
     $('#selected-date input#message').attr('placeholder', coinData[1]);
-    $('#selected-date input#price').attr('placeholder', coinData[2].toNumber());
+    $('#selected-date input#price').attr('placeholder', getEther(coinData[2].toNumber()));
     $('#selected-date input#coin-id').val(id);
   },
 
@@ -158,7 +163,8 @@ App = {
 
   _reloadPendingWithdrawal: async function () {
     const pendingWithdrawal = await App.contracts.BirthdayCoin.getPendingWithdrawal();
-    $('#withdraw span#pending-withdrawal').text(pendingWithdrawal.toNumber());
+    const pendingWithdrawalStr = getEther(pendingWithdrawal.toNumber());
+    $('#withdraw span#pending-withdrawal').text(pendingWithdrawalStr);
   },
 
   withdraw: async function (e) {
@@ -166,7 +172,6 @@ App = {
     await App.contracts.BirthdayCoin.withdraw({gas: 50000});
     App._reloadPendingWithdrawal();
   }
-
 };
 
 $(function() {

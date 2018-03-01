@@ -1,12 +1,9 @@
 # TODO
 - webapp
   - UX guidance around tx times + withdrawal cost
-  - organize the code so that I'm at least proud of it...
-    - optional i guess
   - style so that everything fits nicely with padding, etc.
   - desc text
     - rebrand to datecoin?
-  - display prices in eth
 - configurability of which net to connect to
 - deploy to mainnet + deploy webapp
   - may need to store ABI with codebase?
