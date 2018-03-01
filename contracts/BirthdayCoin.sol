@@ -15,7 +15,7 @@ contract BirthdayCoin  {
   // 2/29 | 366 (leap day)
   mapping(uint => address) public coinToOwner;
   mapping(uint => string) public coinToMessage;
-  mapping(uint => uint) public coinToPrice; // TODO: for clarity, maybe this should reflect the initial price too..
+  mapping(uint => uint) public coinToPrice;
   mapping(address => uint) _pendingWithdrawals;
 
   // sorted (lowest-highest) array of top 10 coin IDs by price
@@ -28,18 +28,21 @@ contract BirthdayCoin  {
     creator = msg.sender;
   }
 
+  // TODO: pass in owner that user saw to verify no race condition!
   // TODO: (maybe) add fee to creator
   function buyBirthday(uint id, string message) public payable returns (bool) {
     require(id >= 1 && id <= 366);
 
     var (owner, prevMessage, price) = _getCoinData(id);
-    if (msg.value > price) {
+    if (msg.value >= price) {
       _pendingWithdrawals[owner] += msg.value;
       coinToOwner[id] = msg.sender;
       coinToMessage[id] = message;
       coinToPrice[id] = _determineNewPrice(msg.value);
       _updateTop10Coins(id);
+      return true;
     } else {
+      // TODO: Send value back?
       return false;
     }
   }

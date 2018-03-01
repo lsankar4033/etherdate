@@ -1,6 +1,8 @@
+// TODO: Add way to withdraw!
+// TODO: Better display prices (i.e. as eth)
 App = {
   // TODO: This really shouldn't be checked in... Should figure out how to put this in a config file.
-  devBirthdayCoinAddress: '0x82d50ad3c1091866e258fd0f1a7cc9674609d254',
+  devBirthdayCoinAddress: '0xc8c03647d39a96f02f6ce8999bc22493c290e734',
 
   web3Provider: null,
   contracts: {},
@@ -23,7 +25,6 @@ App = {
     return App.initContract();
   },
 
-  // TODO: Convert to async function
   initContract: function() {
     $.getJSON('BirthdayCoin.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
@@ -35,6 +36,7 @@ App = {
         // initialize components
         App.populateHighPricesTable();
         App.initializeDatepicker();
+        $('#buy-button').click(App.buyCoin);
       });
     });
   },
@@ -125,11 +127,24 @@ App = {
 
     $('#selected-date input#owner').attr('placeholder', coinData[0]);
     $('#selected-date input#message').attr('placeholder', coinData[1]);
-    $('#selected-date input#price').attr('placeholder', coinData[2]);
+    $('#selected-date input#price').attr('placeholder', coinData[2].toNumber());
+    $('#selected-date input#coin-id').val(coinId);
+  },
 
-    console.log(coinData);
+  // TODO: if false is returned from smart contract, indicate this to user
+  buyCoin: async function (e) {
+    coinId = $('#selected-date input#coin-id').val();
+    price = $('#selected-date input#price').attr('placeholder');
+
+    // TODO: make it so that new message is user input (maybe also include input for price user is willing to
+    // pay
+    const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, 'TEST MESSAGE', {value: price});
+
+    // TODO: Reload all panes
+
+    // TODO: remove
+    console.log(didBuy);
   }
-
 };
 
 $(function() {
