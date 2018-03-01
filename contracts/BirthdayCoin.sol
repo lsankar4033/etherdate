@@ -4,8 +4,8 @@ pragma solidity ^0.4.4;
 contract BirthdayCoin  {
 
   // TODO: Refine
-  uint constant startingPrice = 1 finney;
-  string constant defaultMessage = "For Sale!!!";
+  uint constant startingPrice = 5 finney;
+  string constant startingMessage = "For Sale!";
 
   // There are 366 coins (1-indexed so that 0 can be used as a non-assignment flag):
   // day | id
@@ -95,7 +95,7 @@ contract BirthdayCoin  {
     uint price;
     if (coinToPrice[id] == 0) {
       owner = creator;
-      message = defaultMessage;
+      message = startingMessage;
       price = startingPrice;
     } else {
       owner = coinToOwner[id];

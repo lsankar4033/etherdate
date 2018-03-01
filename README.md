@@ -1,12 +1,20 @@
 # TODO
-- finish app
-  - fee to creator (me)
-  - style selected date area
-    - better width
-    - form inputs should expand for fields
-  - display prices more nicely
-  - choose a mechanism for price increase/initial price
-- test on testnet
+- smart contracts
+  - choosing pricing/fees
+- webapp
+  - guidance around tx times + withdrawal cost
+  - organize the code so that I'm at least proud of it...
+  - style so that everything fits nicely with padding, etc.
+  - desc text
+  - display prices in eth
+- configurability of which net to connect to
 - deploy to mainnet + deploy webapp
-- write contract unit tests
-- style the damn web app
+
+# Webapp experience notes
+
+Assume non-eth users stumble upon this.
+
+I should give some basic guidance around:
+- how ethereum transactions take some time. perhaps with a link that guides them to the transaction
+  - maybe I should add in events so that js app can change state of page appropriately
+- how this app works. the parameters of price increase/fees
