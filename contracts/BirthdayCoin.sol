@@ -113,8 +113,11 @@ contract BirthdayCoin  {
   // Withdraw split out to avoid re-entrancey if buyBirthday fails on send
   function withdraw() public {
     uint amount = _pendingWithdrawals[msg.sender];
-    _pendingWithdrawals[msg.sender] = 0; // zero out withdrawal first to protect against re-entrancy
-    msg.sender.transfer(amount);
+
+    if (amount > 0) {
+      _pendingWithdrawals[msg.sender] = 0; // zero out withdrawal first to protect against re-entrancy
+      msg.sender.transfer(amount);
+    }
   }
 
   function getPendingWithdrawal() public view returns (uint) {

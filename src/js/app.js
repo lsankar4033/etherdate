@@ -1,4 +1,5 @@
-const devBirthdayCoinAddress = '0x2c2b9c9a4a25e24b174f26114e8926a9f2128fe4';
+// TODO: Add in mainnet, testnet versions!
+const devBirthdayCoinAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
 
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
@@ -19,8 +20,7 @@ const monthDays = [
 // NOTE: in the future may want to use intermediate date type
 function coinIdToDateStr(id) {
   if (id > 366 || id < 1) {
-    // TODO: Change to exception/log handling
-    return 'NOT A DATE';
+    return 'INVALID DATE';
   } else if (id == 366) {
     return '2/29';
   } else {
@@ -34,7 +34,7 @@ function coinIdToDateStr(id) {
   }
 }
 
-// TODO: Better display prices (i.e. as eth)
+// TODO: Display prices better (i.e. as eth)
 App = {
   web3Provider: null,
   contracts: {},
@@ -129,6 +129,7 @@ App = {
     await App._handleDateChange(momentDate.dayOfYear());
   },
 
+  // TODO: Maybe hide buy thing if the address is this user!
   _handleDateChange: async function (id) {
     const coinData = await App.contracts.BirthdayCoin.getCoinData(id);
 
@@ -138,17 +139,12 @@ App = {
     $('#selected-date input#coin-id').val(id);
   },
 
-  // TODO: if false is returned from smart contract, indicate this to user
   buyCoin: async function (e) {
     coinId = $('#selected-date input#coin-id').val();
     price = $('#selected-date input#price').attr('placeholder');
     newMessage = $('#selected-date input#new-message').val();
 
-    // TODO: Conditional logic depending on whether or not buy was successful
     const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, newMessage, {value: price});
-
-    // TODO: remove
-    console.log(didBuy);
 
     App._handleDateChange(coinId);
     App.reloadHighPricesTable();
@@ -166,7 +162,8 @@ App = {
   },
 
   withdraw: async function (e) {
-    await App.withdraw();
+    // Hopefully this is enough gas...
+    await App.contracts.BirthdayCoin.withdraw({gas: 50000});
     App._reloadPendingWithdrawal();
   }
 

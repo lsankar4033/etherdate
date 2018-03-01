@@ -1,10 +1,10 @@
 # TODO
 - finish app
   - fee to creator (me)
-  - e2e testing of functionality
   - style selected date area
     - better width
     - form inputs should expand for fields
+  - display prices more nicely
   - choose a mechanism for price increase/initial price
 - test on testnet
 - deploy to mainnet + deploy webapp
