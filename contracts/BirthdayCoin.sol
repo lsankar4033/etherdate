@@ -1,11 +1,8 @@
 pragma solidity ^0.4.4;
 
-// TODO: Consider making this thing abide by ERC721
 contract BirthdayCoin  {
-
-  // TODO: Refine
-  uint constant startingPrice = 5 finney;
-  string constant startingMessage = "For Sale!";
+  uint constant startingPrice = 20 finney;
+  string constant startingMessage = "What's special about today?";
 
   // There are 366 coins (1-indexed so that 0 can be used as a non-assignment flag):
   // day | id
@@ -28,14 +25,15 @@ contract BirthdayCoin  {
     creator = msg.sender;
   }
 
-  // TODO: pass in owner that user saw to verify no race condition!
-  // TODO: (maybe) add fee to creator
   function buyBirthday(uint id, string message) public payable returns (bool) {
     require(id >= 1 && id <= 366);
 
     var (owner, prevMessage, price) = _getCoinData(id);
     if (msg.value >= price) {
-      _pendingWithdrawals[owner] += msg.value;
+      var (fee, payment) = _extractFee(msg.value);
+      _pendingWithdrawals[creator] += fee;
+      _pendingWithdrawals[owner] += payment;
+
       coinToOwner[id] = msg.sender;
       coinToMessage[id] = message;
       coinToPrice[id] = _determineNewPrice(msg.value);
@@ -46,12 +44,26 @@ contract BirthdayCoin  {
     }
   }
 
-  // TODO: Refine
-  function _determineNewPrice(uint amountPaid) private pure returns (uint) {
-    return amountPaid * 2;
+  // Extract fee to be paid to contract creator. Fee is defined entirely in this contract! Can be changed in
+  // future versions
+  function _extractFee(uint amountPaid) private pure returns (uint, uint) {
+    uint fee = amountPaid / 100;
+    return (fee, amountPaid - fee);
   }
 
-  // TODO: Handle the case where we're re-inserting an ID!
+  // 20 -> 320 f = 2x
+  // 320 -> 1620 f = 1.5x
+  // 1620 -> ... f = 1.1x
+  function _determineNewPrice(uint amountPaid) private pure returns (uint) {
+    if (amountPaid < 320 finney) {
+      return amountPaid * 2;
+    } else if (amountPaid < 1620 finney) {
+      return (amountPaid * 3) / 2;
+    } else {
+      return (amountPaid * 11) / 10;
+    }
+  }
+
   // Do an insertion sort into the list and then unshift elements 'behind it'
   function _updateTop10Coins(uint newCoinId) private {
     uint newPrice = coinToPrice[newCoinId];

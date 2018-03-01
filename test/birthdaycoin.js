@@ -1,8 +1,8 @@
 const BirthdayCoin = artifacts.require("BirthdayCoin");
 
 // TODO: Ideally these aren't repeated b/w here and the smart contract
-const startingPrice = 5000000000000000;
-const startingMessage = "For Sale!";
+const startingPrice = 20000000000000000;
+const startingMessage = "What's special about today?";
 
 contract('initialization', async (accounts) => {
   it("should initialize all coins to be owned by the contract creator", async () => {
