@@ -1,5 +1,12 @@
 # TODO
-- write client code and test locally
-- write contract unit tests
+- finish app
+  - fee to creator (me)
+  - e2e testing of functionality
+  - style selected date area
+    - better width
+    - form inputs should expand for fields
+  - choose a mechanism for price increase/initial price
 - test on testnet
-- figure out node deployment
+- deploy to mainnet + deploy webapp
+- write contract unit tests
+- style the damn web app

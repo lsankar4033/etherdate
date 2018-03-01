@@ -1,4 +1,4 @@
-const devBirthdayCoinAddress = '0xc8c03647d39a96f02f6ce8999bc22493c290e734';
+const devBirthdayCoinAddress = '0x2c2b9c9a4a25e24b174f26114e8926a9f2128fe4';
 
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
@@ -34,7 +34,6 @@ function coinIdToDateStr(id) {
   }
 }
 
-// TODO: Add way to withdraw!
 // TODO: Better display prices (i.e. as eth)
 App = {
   web3Provider: null,
@@ -68,8 +67,12 @@ App = {
 
         // initialize components
         App.reloadHighPricesTable();
+
+        // NOTE: non-unified paradigms between buy/withdraw panes, but w/e
         App.initializeDatepicker();
         $('#buy-button').click(App.buyCoin);
+
+        App.initializeWithdrawalPane();
       });
     });
   },
@@ -147,9 +150,26 @@ App = {
     // TODO: remove
     console.log(didBuy);
 
-    await App._handleDateChange(coinId);
-    await App.reloadHighPricesTable();
+    App._handleDateChange(coinId);
+    App.reloadHighPricesTable();
+    App._reloadPendingWithdrawal();
+  },
+
+  initializeWithdrawalPane: async function () {
+    App._reloadPendingWithdrawal();
+    $('#withdraw-button').click(App.withdraw);
+  },
+
+  _reloadPendingWithdrawal: async function () {
+    const pendingWithdrawal = await App.contracts.BirthdayCoin.getPendingWithdrawal();
+    $('#withdraw span#pending-withdrawal').text(pendingWithdrawal.toNumber());
+  },
+
+  withdraw: async function (e) {
+    await App.withdraw();
+    App._reloadPendingWithdrawal();
   }
+
 };
 
 $(function() {

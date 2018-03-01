@@ -116,4 +116,8 @@ contract BirthdayCoin  {
     _pendingWithdrawals[msg.sender] = 0; // zero out withdrawal first to protect against re-entrancy
     msg.sender.transfer(amount);
   }
+
+  function getPendingWithdrawal() public view returns (uint) {
+    return _pendingWithdrawals[msg.sender];
+  }
 }
