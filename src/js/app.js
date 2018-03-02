@@ -65,7 +65,8 @@ App = {
   },
 
   initContract: function() {
-    $.getJSON('BirthdayCoin.json', function(data) {
+    // NOTE: This is the version of BirthdayCoin.json that is *live* on the mainnet
+    $.getJSON('resources/BirthdayCoin.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
