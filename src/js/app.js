@@ -1,6 +1,7 @@
 // TODO: Put these in a config that's determined by env!
 const devBirthdayCoinAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
 const rinkebyBirthdayCoinAddress = '0x5094bd12f227df04905918dc431e822e5d235e64';
+const mainBirthdayCoinAddress = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea';
 
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
@@ -68,7 +69,7 @@ App = {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
-      abstractContract.at(rinkebyBirthdayCoinAddress).then(function (contract) {
+      abstractContract.at(mainBirthdayCoinAddress).then(function (contract) {
         App.contracts.BirthdayCoin = contract;
 
         // initialize components
