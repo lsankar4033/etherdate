@@ -6,10 +6,14 @@
   "directories": {
     "test": "test"
   },
+  "dependencies": {
+    "http-server": "0.11.1"
+  },
   "devDependencies": {
     "lite-server": "^2.3.0"
   },
   "scripts": {
+    "prod": "http-server src/",
     "dev": "lite-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
