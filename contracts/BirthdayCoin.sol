@@ -47,7 +47,7 @@ contract BirthdayCoin  {
   // Extract fee to be paid to contract creator. Fee is defined entirely in this contract! Can be changed in
   // future versions
   function _extractFee(uint amountPaid) private pure returns (uint, uint) {
-    uint fee = amountPaid / 1000;
+    uint fee = amountPaid / 100;
     return (fee, amountPaid - fee);
   }
 

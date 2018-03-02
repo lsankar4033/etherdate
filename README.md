@@ -1,13 +1,9 @@
 # TODO
-- webapp
-  - UX guidance around tx times + withdrawal cost
-  - style so that everything fits nicely with padding, etc.
-  - desc text
-    - rebrand to datecoin?
 - configurability of which net to connect to
 - deploy to mainnet + deploy webapp
   - may need to store ABI with codebase?
 - open source code?
+  - instead could just include the ABI interface or something on the site
   - license it if so
 
 # Webapp experience notes

@@ -11,17 +11,18 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
 
   </head>
   <body>
     <div id="app" class="row">
       <div id="high-prices" class="col-md-4">
-        <h3> Most expensive birthdays </h3>
+        <h3> Hall of Fame </h3>
 
         <table id="high-prices-table" class="table">
           <thead>
             <tr>
-              <th>Date</th>
+              <th>Date (M/D)</th>
               <th>Message</th>
               <th>Current Price (eth)</th>
             </tr>
@@ -32,7 +33,8 @@
       </div>
 
       <div id="buy-dates" class="col-md-4">
-        <h3> Buy a birthday </h3>
+
+        <h3> Buy a date (M/D) </h3>
 
         <div class="input-group date" id='datetimepicker'>
           <input type='text' class="form-control" />
@@ -42,7 +44,6 @@
         </div>
 
         <div id="selected-date">
-          <!-- TODO: Make sure these input boxes expand for full input -->
           <div class="form-group row">
             <label class="col-sm-2 col-form-label">Current Owner</label>
             <div class="col-sm-10">
@@ -58,16 +59,22 @@
           </div>
 
           <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Current Price (eth)</label>
+            <label class="col-sm-2 col-form-label">Price (eth)</label>
             <div class="col-sm-10">
               <input type="text" id="price" readonly class="form-control plaintext">
             </div>
           </div>
 
           <input id="coin-id" type="hidden">
-          <div>
-            <input id="new-message" type="text" class="form-control plaintext" placeholder="Enter new message here...">
-            <button id="buy-button" type="button" class="btn btn-primary">Buy</button>
+          <div class="row">
+
+            <div class="col-sm-10">
+              <input id="new-message" type="text" class="form-control plaintext" placeholder="Enter your new message here">
+            </div>
+
+            <div class="col-sm-2">
+              <button id="buy-button" type="button" class="btn btn-primary">Buy</button>
+            </div>
           </div>
         </div>
       </div>
@@ -82,10 +89,66 @@
       </div>
     </div>
 
-    <!-- TODO: replace with actual description text -->
     <div id="description">
-      <h2> What is this? </h2>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      <h3> What is this? </h3>
+      <p>
+        Datecoin is a smart contract living on the Ethereum blockchain that allows anyone to 'buy' a day of the
+        year and associate a message with it. The message on an owned date can only be changed if someone else
+        buys the date from the owner.
+      </p>
+
+      <p>
+      Date prices increase on a fixed schedule as described below, under the heading 'How does pricing work?'
+      </p>
+
+      <h3> Why? </h3>
+      <p>
+        Mostly just curiosity.
+      </p>
+
+      <p>
+        Blockchains allow individuals to organize around memes quickly. Individual days of the year are the source
+        of countless memes that are an important part of our collective consciousness:
+      </p>
+      <p>
+      <strong>6/28:</strong> the <a href="https://en.wikipedia.org/wiki/Assassination_of_Archduke_Franz_Ferdinand_of_Austria">assassination</a>
+      that politically sparked World War 1
+      </p>
+      <p>
+      <strong>10/31:</strong> the posting of a <a href="https://bitcoin.org/bitcoin.pdf">paper</a> on a forum that marked
+      the beginning of a new era for the global financial system
+      </p>
+      <p>
+      <strong>7/4:</strong> the day on which <a href="https://en.wikipedia.org/wiki/Thirteen_Colonies">13 unruly colonies</a>
+      fractured from their parent empire to form a world power of their own
+      </p>
+      <p>
+      <strong>1/4:</strong> the birth date of <a href="https://en.wikipedia.org/wiki/Isaac_Newton">a man</a> whose frameworks
+      about infinitesimal value underline how most of think about the physical world today
+      </p>
+      <p>
+        I think these sorts of memes are the source of massive cultural value. This project is an experiment to
+        see what sorts of memes form around dates among the participants in the Ethereum blockchain.
+      </p>
+      <h3> How does pricing work? </h3>
+      <p>
+        Each date starts priced at 0.02 eth. Each time a date is bought, its price increases according to the
+        following schedule:
+      </p>
+      <p><strong>20 eth -> 320 eth</strong> : 2x </p>
+      <p><strong>320 eth -> 1620 eth</strong> : 1.5x </p>
+      <p><strong>1620 eth -> the moon</strong> : 1.1x </p>
+      <p>
+        Of the price paid, 1% is absorbed as commission for keeping this site running, and a nominal amount
+        is used to withdraw the eth from the contract (less than 0.005 eth at last count). The rest goes to the
+        previous date owner and can be withdrawn via the green 'Withdraw' button at the top of the page.
+      </p>
+      <h3> What are dates 'worth'? </h3>
+      <p>
+        Nothing, in all likelihood. If you think that a date has demand (and will be bought up) because it
+        represents something people care about, go ahead and buy it, but realize that this is all for fun. Please
+        don't spend money you can't afford to lose.
+      </p>
     </div>
 
     <!-- bootstrap+jquery+popper+moment -->
