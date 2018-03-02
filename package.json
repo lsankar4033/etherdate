@@ -6,9 +6,6 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {
-    // "fsevents": "^1.1.3"
-  },
   "devDependencies": {
     "lite-server": "^2.3.0"
   },
