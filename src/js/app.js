@@ -1,7 +1,7 @@
 // TODO: Put these in a config that's determined by env!
 const devBirthdayCoinAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
 const rinkebyBirthdayCoinAddress = '0x5094bd12f227df04905918dc431e822e5d235e64';
-const mainBirthdayCoinAddress = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea';
+const mainBirthdayCoinAddress = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea'; // commit: f659224
 
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
