@@ -97,7 +97,13 @@
         buys the date from the owner.
       </p>
       <p>
-      Date prices increase on a fixed schedule as described below, under the heading 'How does pricing work?'
+        Date prices increase on a fixed schedule as described below, under the heading 'How does pricing work?'
+      </p>
+
+      <p>
+        Source code for the contract is <a href="https://gist.github.com/lsankar4033/6612427117e29393f06f4f600600a353">here</a>
+        (note that contract and methods refer to 'birthdays' instead of 'dates'. When I originally wrote/deployed it, I was
+        planning on making this birthday-specific). Feel free to deploy your own version if you'd like.
       </p>
 
       <h3> Why? </h3>
@@ -107,23 +113,8 @@
 
       <p>
         Blockchains allow individuals to organize around memes quickly. Individual days of the year are the source
-        of countless memes that are an important part of our collective consciousness:
-      </p>
-      <p>
-      <strong>6/28:</strong> the <a href="https://en.wikipedia.org/wiki/Assassination_of_Archduke_Franz_Ferdinand_of_Austria">assassination</a>
-      that politically sparked World War 1
-      </p>
-      <p>
-      <strong>10/31:</strong> the posting of a <a href="https://bitcoin.org/bitcoin.pdf">paper</a> on a forum that marked
-      the beginning of a new era for the global financial system
-      </p>
-      <p>
-      <strong>7/4:</strong> the day on which <a href="https://en.wikipedia.org/wiki/Thirteen_Colonies">13 unruly colonies</a>
-      fractured from the British Empire to form a world power of their own
-      </p>
-      <p>
-      <strong>1/4:</strong> the birthday of <a href="https://en.wikipedia.org/wiki/Isaac_Newton">a guy</a> whose frameworks
-      about infinitesimal value underline how most of think about the physical world today
+        of many memes that are an important part of our collective consciousness. Some examples are holidays,
+        birthdays of notable people, and dates of significance for some organization (i.e. a nation).
       </p>
       <p>
         I think these sorts of memes are the source of massive cultural value. This project is an experiment to
@@ -134,9 +125,24 @@
         Each date starts priced at 0.02 eth. Each time a date is bought, its price increases according to the
         following schedule:
       </p>
-      <p><strong>20 eth -> 320 eth</strong> : 2x </p>
-      <p><strong>320 eth -> 1620 eth</strong> : 1.5x </p>
-      <p><strong>1620 eth -> the moon</strong> : 1.1x </p>
+      <table class='table'>
+        <tbody>
+          <tr>
+            <td> 20 eth -> 320 eth </td>
+            <td> 2x </td>
+          </tr>
+
+          <tr>
+            <td> 320 eth -> 1620 eth </td>
+            <td> 1.5x </td>
+          </tr>
+
+          <tr>
+            <td> 1620 eth -> the moon </td>
+            <td> 1.1x </td>
+          </tr>
+        </tbody>
+      </table>
       <p>
         Of the price paid, 1% is absorbed as commission for keeping this site running, and a nominal amount
         is used to withdraw the eth from the contract (less than 0.005 eth at last count). The rest goes to the
@@ -149,9 +155,9 @@
         select a date, enter your message, and buy it. The top 10 highest-priced dates show up in the 'Hall of Fame'
         above along with their messages.
       </p>
-      <h3> What are dates 'worth'? </h3>
+      <h3> Are dates worth anything? </h3>
       <p>
-        Nothing, in all likelihood. If you think that a date has demand (and will be bought up) because it
+        Probably not, in all likelihood. If you think that a date has demand (and will be bought up) because it
         represents something people care about, go ahead and buy it, but realize that this is all for fun. Please
         don't spend money you can't afford to lose.
       </p>
