@@ -139,11 +139,17 @@ App = {
   // TODO: Maybe hide buy thing if the address is this user!
   _handleDateChange: async function (id) {
     const coinData = await App.contracts.BirthdayCoin.getCoinData(id);
-
-    $('#selected-date input#owner').attr('placeholder', coinData[0]);
     $('#selected-date input#message').attr('placeholder', coinData[1]);
     $('#selected-date input#price').attr('placeholder', getEther(coinData[2].toNumber()));
     $('#selected-date input#coin-id').val(id);
+
+    if (coinData[0] == web3.eth.accounts[0]) {
+      $('#buy-input').hide();
+      $('#selected-date input#owner').attr('placeholder', `${coinData[0]} (you)`);
+    } else {
+      $('#buy-input').show();
+      $('#selected-date input#owner').attr('placeholder', coinData[0]);
+    }
   },
 
   buyCoin: async function (e) {
