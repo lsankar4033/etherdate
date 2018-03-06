@@ -40,6 +40,10 @@ function getEther(wei) {
   return wei / (10 ** 18);
 }
 
+function getWei(ether) {
+  return ether * (10 ** 18);
+}
+
 // TODO: Notice that ethereum txes take tiem after buy
 // TODO: Display prices better (i.e. as eth)
 App = {
@@ -136,7 +140,6 @@ App = {
     await App._handleDateChange(momentDate.dayOfYear());
   },
 
-  // TODO: Maybe hide buy thing if the address is this user!
   _handleDateChange: async function (id) {
     const coinData = await App.contracts.BirthdayCoin.getCoinData(id);
     $('#selected-date input#message').attr('placeholder', coinData[1]);
@@ -154,7 +157,7 @@ App = {
 
   buyCoin: async function (e) {
     coinId = $('#selected-date input#coin-id').val();
-    price = $('#selected-date input#price').attr('placeholder');
+    price = getWei($('#selected-date input#price').attr('placeholder'));
     newMessage = $('#selected-date input#new-message').val();
 
     const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, newMessage, {value: price});
