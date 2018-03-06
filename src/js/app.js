@@ -36,6 +36,16 @@ function coinIdToDateStr(id) {
   }
 }
 
+function dayOfYearToCoinId(doy) {
+  if (doy < 60) {
+    return doy
+  } else if (doy == 60) {
+    return 366;
+  } else {
+    return doy - 1;
+  }
+}
+
 function getEther(wei) {
   return wei / (10 ** 18);
 }
@@ -137,7 +147,7 @@ App = {
 
   handleDateChange: async function (e) {
     const momentDate = e.date;
-    await App._handleDateChange(momentDate.dayOfYear());
+    await App._handleDateChange(dayOfYearToCoinId(momentDate.dayOfYear()));
   },
 
   _handleDateChange: async function (id) {
