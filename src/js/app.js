@@ -103,7 +103,9 @@ App = {
     $('#high-prices-table tbody').empty();
 
     const top10Coins = await App.contracts.BirthdayCoin.getTop10Coins();
-    const topCoinIds = top10Coins.map(x => x.toNumber()).filter(x => x > 0);
+
+    // TODO: Fix smart contract so we don't have to do this deduplication...
+    const topCoinIds = new Set(top10Coins.map(x => x.toNumber()).filter(x => x > 0));
 
     topCoinData = []
     for (id of topCoinIds) {
@@ -111,6 +113,7 @@ App = {
       coinData.push(id)
       topCoinData.push(coinData);
     }
+    topCoinData.sort((a,b) => a[2] - b[2])
 
     var html = '';
     topCoinData.reverse();
