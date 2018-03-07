@@ -19,7 +19,7 @@ const monthDays = [
   [12, 31]
 ]
 
-const defaultGasPrice = 20;
+const defaultGasPrice = 21000000000;
 
 // NOTE: in the future may want to use intermediate date type
 function coinIdToDateStr(id) {
