@@ -54,6 +54,10 @@ function getWei(ether) {
   return ether * (10 ** 18);
 }
 
+function determineGas(gasEstimate) {
+  return gasEstimate * 10;
+}
+
 // TODO: Notice that ethereum txes take tiem after buy
 // TODO: Display prices better (i.e. as eth)
 App = {
@@ -84,7 +88,7 @@ App = {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
-      abstractContract.at(mainBirthdayCoinAddress).then(function (contract) {
+      abstractContract.at(rinkebyBirthdayCoinAddress).then(function (contract) {
         App.contracts.BirthdayCoin = contract;
 
         // initialize components
@@ -173,7 +177,9 @@ App = {
     price = getWei($('#selected-date input#price').attr('placeholder'));
     newMessage = $('#selected-date input#new-message').val();
 
-    const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, newMessage, {value: price});
+    const gasEstimate = await App.contracts.BirthdayCoin.buyBirthday.estimateGas(coinId, newMessage);
+
+    const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, newMessage, {value: price, gas: determineGas(gasEstimate)});
 
     App._handleDateChange(coinId);
     App.reloadHighPricesTable();
@@ -192,8 +198,9 @@ App = {
   },
 
   withdraw: async function (e) {
-    // Hopefully this is enough gas...
-    await App.contracts.BirthdayCoin.withdraw({gas: 50000});
+    const gasEstimate = await App.contracts.BirthdayCoin.withdraw.estimateGas()
+
+    await App.contracts.BirthdayCoin.withdraw({gas: determineGas(gasEstimate)});
     App._reloadPendingWithdrawal();
   }
 };
