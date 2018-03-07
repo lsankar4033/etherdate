@@ -88,7 +88,7 @@ App = {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
-      abstractContract.at(rinkebyBirthdayCoinAddress).then(function (contract) {
+      abstractContract.at(mainBirthdayCoinAddress).then(function (contract) {
         App.contracts.BirthdayCoin = contract;
 
         // initialize components
