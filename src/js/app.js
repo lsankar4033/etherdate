@@ -19,6 +19,8 @@ const monthDays = [
   [12, 31]
 ]
 
+const defaultGasPrice = 20;
+
 // NOTE: in the future may want to use intermediate date type
 function coinIdToDateStr(id) {
   if (id > 366 || id < 1) {
@@ -179,7 +181,7 @@ App = {
 
     const gasEstimate = await App.contracts.BirthdayCoin.buyBirthday.estimateGas(coinId, newMessage);
 
-    const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, newMessage, {value: price, gas: determineGas(gasEstimate)});
+    const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
 
     App._handleDateChange(coinId);
     App.reloadHighPricesTable();
@@ -200,7 +202,7 @@ App = {
   withdraw: async function (e) {
     const gasEstimate = await App.contracts.BirthdayCoin.withdraw.estimateGas()
 
-    await App.contracts.BirthdayCoin.withdraw({gas: determineGas(gasEstimate)});
+    await App.contracts.BirthdayCoin.withdraw({gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
     App._reloadPendingWithdrawal();
   }
 };
