@@ -1,3 +1,3 @@
 # TODO
-- (optional) configurability of which net to connect to
+- fix top10 bug in smart contract and re-deploy!
 
