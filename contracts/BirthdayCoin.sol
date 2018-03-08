@@ -4,6 +4,8 @@ contract BirthdayCoin  {
   uint constant startingPrice = 20 finney;
   string constant startingMessage = "Nothing to see here...";
 
+  uint constant dummyCoinID = 0;
+
   // There are 366 coins (1-indexed so that 0 can be used as a non-assignment flag):
   // day | id
   // 1/1 | 1
@@ -68,25 +70,27 @@ contract BirthdayCoin  {
   function _updateTop10Coins(uint newCoinId) private {
     uint newPrice = coinToPrice[newCoinId];
 
-    uint i = 0;
-    while (i < 10 && (_top10Coins[i] == 0 || newPrice >= coinToPrice[_top10Coins[i]])) {
+    uint8 i = 0;
+    while (i < 10 && (_top10Coins[i] == dummyCoinID || newPrice >= coinToPrice[_top10Coins[i]])) {
       i++;
     }
 
     // don't need to change anything if new price less than all of top 10
     if (i > 0) {
-      uint insertionIndex = i - 1;
+      uint8 insertionIndex = i - 1;
       uint idToInsert = newCoinId;
       uint tmp;
 
-      // because 0 represents non-coin, if we ever have to insert a 0, rest of array is 0s, so can break out
-      // of loop
-      while (insertionIndex >= 0 && idToInsert != 0) {
+      while (idToInsert != dummyCoinID) {
         tmp = _top10Coins[insertionIndex];
         _top10Coins[insertionIndex] = idToInsert;
 
-        insertionIndex--;
+        // Don't do shifting logic if we're at the beginning of the list!
+        if (insertionIndex == 0) {
+          break;
+        }
 
+        insertionIndex--;
         if (tmp == idToInsert) { // duplicate coin
           idToInsert = _top10Coins[insertionIndex];
         } else {
@@ -105,7 +109,7 @@ contract BirthdayCoin  {
     address owner;
     string memory message;
     uint price;
-    if (coinToPrice[id] == 0) {
+    if (coinToPrice[id] == dummyCoinID) {
       owner = creator;
       message = startingMessage;
       price = startingPrice;
