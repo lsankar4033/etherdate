@@ -70,6 +70,9 @@ contract BirthdayCoin  {
   function _updateTop10Coins(uint newCoinId) private {
     uint newPrice = coinToPrice[newCoinId];
 
+    _removeExistingFromTop10(newCoinId);
+
+    // TODO: Pull bottom out into 'insertNewCoin' method or something
     uint8 i = 0;
     while (i < 10 && (_top10Coins[i] == dummyCoinID || newPrice >= coinToPrice[_top10Coins[i]])) {
       i++;
@@ -97,6 +100,33 @@ contract BirthdayCoin  {
           idToInsert = tmp;
         }
       }
+    }
+  }
+
+  // TODO: Finish
+  // Remove all existing instances of new coin in the top 10 and shift list accordingly
+  // i.e. if newCoinId = 1 and top10List = [0,...,3,1,2] -> [0,...,3,2]
+  function _removeExistingFromTop10(uint newCoinId) private returns (bool) {
+    uint newCoinIdx = 10; // only top 10, so this can never be an issue... May want to hardcode in top 10-ness
+    for (uint i = 0; i < 10; i++) {
+      if (_top10Coins[i] == newCoinId) {
+        newCoinIdx = i;
+      }
+    }
+
+    if (newCoinIdx > 9) {
+      return false;
+    } else {
+      _top10Coins[newCoinIdx] = 0;
+
+      // No shifting necessary if coin at beginning of list
+      if (newCoinIdx == 0) {
+        return true;
+      }
+
+      // Shift everything before newCoinIdx 1 over
+
+      return true;
     }
   }
 
