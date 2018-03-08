@@ -10,14 +10,13 @@ contract('buyBirthday', async (accounts) => {
     let instance = await BirthdayCoin.deployed();
 
     for (i = 1; i <= 11; i++) {
-      let result = await instance.buyBirthday(i, 'test message', {value: startingPrice, from: accounts[1]});
+      let result = await instance.buyBirthday(i, 'foobar', {value: startingPrice, from: accounts[1]});
     }
 
     for (i = 1; i <= 11; i++) {
       let coinData = await instance.getCoinData(i);
       assert.equal(coinData[0], accounts[1]);
-      assert.equal(coinData[1], 'test message');
+      assert.equal(coinData[1], 'foobar');
     }
   });
-
 });
