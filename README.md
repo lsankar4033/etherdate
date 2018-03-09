@@ -1,7 +1,8 @@
 # TODO
 - things to include in V2
-  - fix bug with top10 list not working properly
-  - fix break in code when we get to >10 total buys!
   - rename contract to etherdate
+  - manual testing with friends on testnet!
+  - honor all purchases from gen 1
+    - i.e. copy state over to gen 2
   - consider having configurable network address
-  - should gen 2 honor the purchases from gen 1?
+  - include github source on website
