@@ -15,6 +15,7 @@ contract Etherdate {
   mapping(uint => address) public coinToOwner;
   mapping(uint => string) public coinToMessage;
   mapping(uint => uint) public coinToPrice;
+
   mapping(address => uint) _pendingWithdrawals;
 
   // sorted (lowest-highest) array of top 10 coin IDs by price
@@ -23,8 +24,26 @@ contract Etherdate {
   // May not need this
   address public creator;
 
+  modifier onlyCreator() {
+    require(msg.sender == creator);
+    _;
+  }
+
   function Etherdate() public {
     creator = msg.sender;
+  }
+
+  // NOTE: Doesn't include pending withdrawals
+  function insertGen1Data() public onlyCreator {
+    _assignCoin(31, 0x183feBd8828a9ac6c70C0e27FbF441b93004fC05, "Vitalik's birthday", 40 finney);
+    _assignCoin(365, 0x183feBd8828a9ac6c70C0e27FbF441b93004fC05, "New Year's eve Party Up!", 40 finney);
+    _assignCoin(32, 0x0960069855Bd812717E5A8f63C302B4e43bAD89F, "", 40 finney);
+    _assignCoin(110, 0x5632CA98e5788edDB2397757Aa82d1Ed6171e5aD, "Hitler kind of ruins this day, so blaze it up", 40 finney);
+    _assignCoin(1, 0x183feBd8828a9ac6c70C0e27FbF441b93004fC05, "Happy New Year!", 80 finney);
+    _assignCoin(165, 0xE5Ef187Fa4834d0e422763B02450299a1bbf5a59, "What do Donald Trump and Che Guevara have in common?", 40 finney);
+    _assignCoin(45, 0x1436c16D38347953d388e882b2A21564EA33005a, "Do not buy. Reserved for loving actual people :D", 40 finney);
+    _assignCoin(359, 0x0960069855Bd812717E5A8f63C302B4e43bAD89F, "", 80 finney);
+    _top10Coins = [31, 365, 32, 110, 166, 45, 1, 359];
   }
 
   function buy(uint id, string message) public payable returns (bool) {
@@ -36,14 +55,18 @@ contract Etherdate {
       _pendingWithdrawals[creator] += fee;
       _pendingWithdrawals[owner] += payment;
 
-      coinToOwner[id] = msg.sender;
-      coinToMessage[id] = message;
-      coinToPrice[id] = _determineNewPrice(msg.value);
+      _assignCoin(id, msg.sender, message, _determineNewPrice(msg.value));
       _updateTop10Coins(id);
       return true;
     } else {
       return false;
     }
+  }
+
+  function _assignCoin(uint id, address owner, string message, uint newPrice) private {
+    coinToOwner[id] = owner;
+    coinToMessage[id] = message;
+    coinToPrice[id] = newPrice;
   }
 
   // Extract fee to be paid to contract creator. Fee is defined entirely in this contract! Can be changed in
@@ -164,5 +187,10 @@ contract Etherdate {
 
   function getPendingWithdrawal() public view returns (uint) {
     return _pendingWithdrawals[msg.sender];
+  }
+
+  // NOTE: For retrieving withdrawals in case a new generation is necessary
+  function getPendingWithdrawal(address user) public view onlyCreator returns (uint) {
+    return _pendingWithdrawals[user];
   }
 }

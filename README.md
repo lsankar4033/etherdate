@@ -1,8 +1,8 @@
 # TODO
 - things to include in V2
-  - rename contract to etherdate
-  - honor all purchases from gen 1
-    - i.e. copy state over to gen 2
+  - add callback message (alert?) after metamask payment finishes on frontend
+    - necessary?
   - manual testing on testnet!
-  - consider having configurable network address
-  - include github source on website
+  - update index.html
+    - refer to github
+    - update gist reference
