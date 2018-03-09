@@ -1,6 +1,6 @@
 pragma solidity ^0.4.4;
 
-contract BirthdayCoin  {
+contract Etherdate {
   uint constant startingPrice = 20 finney;
   string constant startingMessage = "Nothing to see here...";
 
@@ -23,11 +23,11 @@ contract BirthdayCoin  {
   // May not need this
   address public creator;
 
-  function BirthdayCoin() public {
+  function Etherdate() public {
     creator = msg.sender;
   }
 
-  function buyBirthday(uint id, string message) public payable returns (bool) {
+  function buy(uint id, string message) public payable returns (bool) {
     require(id >= 1 && id <= 366);
 
     var (owner, prevMessage, price) = _getCoinData(id);
@@ -152,7 +152,7 @@ contract BirthdayCoin  {
     return _top10Coins;
   }
 
-  // Withdraw split out to avoid re-entrancey if buyBirthday fails on send
+  // Withdraw split out to avoid re-entrancey if buy fails on send
   function withdraw() public {
     uint amount = _pendingWithdrawals[msg.sender];
 

@@ -1,7 +1,7 @@
 // TODO: Put these in a config that's determined by env!
-const devBirthdayCoinAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
-const rinkebyBirthdayCoinAddress = '0x5094bd12f227df04905918dc431e822e5d235e64';
-const mainBirthdayCoinAddress = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea'; // commit: f659224
+const devAddress = '0x4e72770760c011647d4873f60a3cf6cdea896cd8';
+const rinkebyAddress = '0x5094bd12f227df04905918dc431e822e5d235e64';
+const mainAddress = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea'; // commit: f659224
 
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
@@ -85,13 +85,13 @@ App = {
   },
 
   initContract: function() {
-    // NOTE: This is the version of BirthdayCoin.json that is *live* on the mainnet
-    $.getJSON('BirthdayCoin.json', function(data) {
+    // NOTE: This is the version of Etherdate.json that is *live* on the mainnet
+    $.getJSON('Etherdate.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
-      abstractContract.at(mainBirthdayCoinAddress).then(function (contract) {
-        App.contracts.BirthdayCoin = contract;
+      abstractContract.at(devAddress).then(function (contract) {
+        App.contracts.Etherdate = contract;
 
         // initialize components
         App.reloadHighPricesTable();
@@ -108,14 +108,14 @@ App = {
   reloadHighPricesTable: async function() {
     $('#high-prices-table tbody').empty();
 
-    const top10Coins = await App.contracts.BirthdayCoin.getTop10Coins();
+    const top10Coins = await App.contracts.Etherdate.getTop10Coins();
 
     // TODO: Fix smart contract so we don't have to do this deduplication...
     const topCoinIds = new Set(top10Coins.map(x => x.toNumber()).filter(x => x > 0));
 
     topCoinData = []
     for (id of topCoinIds) {
-      var coinData = await App.contracts.BirthdayCoin.getCoinData(id)
+      var coinData = await App.contracts.Etherdate.getCoinData(id)
       coinData.push(id)
       topCoinData.push(coinData);
     }
@@ -160,7 +160,7 @@ App = {
   },
 
   _handleDateChange: async function (id) {
-    const coinData = await App.contracts.BirthdayCoin.getCoinData(id);
+    const coinData = await App.contracts.Etherdate.getCoinData(id);
     $('#selected-date input#message').attr('placeholder', coinData[1]);
     $('#selected-date input#price').attr('placeholder', getEther(coinData[2].toNumber()));
     $('#selected-date input#coin-id').val(id);
@@ -179,9 +179,9 @@ App = {
     price = getWei($('#selected-date input#price').attr('placeholder'));
     newMessage = $('#selected-date input#new-message').val();
 
-    const gasEstimate = await App.contracts.BirthdayCoin.buyBirthday.estimateGas(coinId, newMessage);
+    const gasEstimate = await App.contracts.Etherdate.buyBirthday.estimateGas(coinId, newMessage);
 
-    const didBuy = await App.contracts.BirthdayCoin.buyBirthday(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
+    const didBuy = await App.contracts.Etherdate.buyBirthday(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
 
     App._handleDateChange(coinId);
     App.reloadHighPricesTable();
@@ -194,15 +194,15 @@ App = {
   },
 
   _reloadPendingWithdrawal: async function () {
-    const pendingWithdrawal = await App.contracts.BirthdayCoin.getPendingWithdrawal();
+    const pendingWithdrawal = await App.contracts.Etherdate.getPendingWithdrawal();
     const pendingWithdrawalStr = getEther(pendingWithdrawal.toNumber());
     $('#withdraw span#pending-withdrawal').text(pendingWithdrawalStr);
   },
 
   withdraw: async function (e) {
-    const gasEstimate = await App.contracts.BirthdayCoin.withdraw.estimateGas()
+    const gasEstimate = await App.contracts.Etherdate.withdraw.estimateGas()
 
-    await App.contracts.BirthdayCoin.withdraw({gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
+    await App.contracts.Etherdate.withdraw({gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
     App._reloadPendingWithdrawal();
   }
 };
