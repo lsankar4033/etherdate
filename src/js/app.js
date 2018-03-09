@@ -1,5 +1,5 @@
 // TODO: Put these in a config that's determined by env!
-const devAddress = '0x4e72770760c011647d4873f60a3cf6cdea896cd8';
+const devAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
 const rinkebyAddress = '0x5094bd12f227df04905918dc431e822e5d235e64';
 const mainAddress = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea'; // commit: f659224
 
@@ -175,12 +175,9 @@ App = {
     newMessage = $('#selected-date input#new-message').val();
 
     const gasEstimate = await App.contracts.Etherdate.buy.estimateGas(coinId, newMessage);
-
     const didBuy = await App.contracts.Etherdate.buy(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
 
-    App._handleDateChange(coinId);
-    App.reloadHighPricesTable();
-    App._reloadPendingWithdrawal();
+    alert("Transaction submitted! It'll take some time for your changes to be reflected on the Ethereum network.");
   },
 
   initializeWithdrawalPane: async function () {
@@ -198,7 +195,8 @@ App = {
     const gasEstimate = await App.contracts.Etherdate.withdraw.estimateGas()
 
     await App.contracts.Etherdate.withdraw({gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
-    App._reloadPendingWithdrawal();
+
+    alert("Transaction submitted! It'll take some time for your changes to be reflected on the Ethereum network.");
   }
 };
 
