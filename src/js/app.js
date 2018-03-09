@@ -60,8 +60,6 @@ function determineGas(gasEstimate) {
   return gasEstimate * 10;
 }
 
-// TODO: Notice that ethereum txes take tiem after buy
-// TODO: Display prices better (i.e. as eth)
 App = {
   web3Provider: null,
   contracts: {},
@@ -108,18 +106,15 @@ App = {
   reloadHighPricesTable: async function() {
     $('#high-prices-table tbody').empty();
 
-    const top10Coins = await App.contracts.Etherdate.getTop10Coins();
-
-    // TODO: Fix smart contract so we don't have to do this deduplication...
-    const topCoinIds = new Set(top10Coins.map(x => x.toNumber()).filter(x => x > 0));
+    var top10Coins = await App.contracts.Etherdate.getTop10Coins();
+    top10Coins = top10Coins.map(x => x.toNumber()).filter(x => x > 0)
 
     topCoinData = []
-    for (id of topCoinIds) {
+    for (id of top10Coins) {
       var coinData = await App.contracts.Etherdate.getCoinData(id)
       coinData.push(id)
       topCoinData.push(coinData);
     }
-    topCoinData.sort((a,b) => a[2] - b[2])
 
     var html = '';
     topCoinData.reverse();
