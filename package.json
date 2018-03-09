@@ -1,7 +1,7 @@
 {
-  "name": "birthdaycoin",
+  "name": "etherdate",
   "version": "1.0.0",
-  "description": "The best possible birthday gift",
+  "description": "Dates for sale on Ethereum",
   "main": "truffle.js",
   "directories": {
     "test": "test"
@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lsankar4033/birthdaycoin.git"
+    "url": "git+https://github.com/lsankar4033/etherdate.git"
   },
   "author": "lsankar4033",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lsankar4033/birthdaycoin/issues"
+    "url": "https://github.com/lsankar4033/etherdate/issues"
   },
-  "homepage": "https://github.com/lsankar4033/birthdaycoin#readme"
+  "homepage": "https://github.com/lsankar4033/etherdate#readme"
 }
