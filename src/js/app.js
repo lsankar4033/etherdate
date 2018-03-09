@@ -174,9 +174,9 @@ App = {
     price = getWei($('#selected-date input#price').attr('placeholder'));
     newMessage = $('#selected-date input#new-message').val();
 
-    const gasEstimate = await App.contracts.Etherdate.buyBirthday.estimateGas(coinId, newMessage);
+    const gasEstimate = await App.contracts.Etherdate.buy.estimateGas(coinId, newMessage);
 
-    const didBuy = await App.contracts.Etherdate.buyBirthday(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
+    const didBuy = await App.contracts.Etherdate.buy(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
 
     App._handleDateChange(coinId);
     App.reloadHighPricesTable();
