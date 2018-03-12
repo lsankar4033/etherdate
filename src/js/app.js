@@ -1,7 +1,7 @@
-// TODO: Put these in a config that's determined by env!
-const devAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
-const rinkebyAddress = '0x5094bd12f227df04905918dc431e822e5d235e64';
-const mainAddress = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea'; // commit: f659224
+const rinkebyAddressGen1 = '0x5094bd12f227df04905918dc431e822e5d235e64';
+const mainAddressGen1 = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea'; // commit: f659224
+
+const rinkebyAddressGen2 = '0x62500af05b9238940b62abd8b73584f40da9971a';
 
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
@@ -88,7 +88,7 @@ App = {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
-      abstractContract.at(devAddress).then(function (contract) {
+      abstractContract.at(rinkebyAddressGen2).then(function (contract) {
         App.contracts.Etherdate = contract;
 
         // initialize components
