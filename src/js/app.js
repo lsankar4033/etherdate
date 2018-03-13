@@ -3,6 +3,8 @@ const mainAddressGen1 = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea'; // commit:
 
 const rinkebyAddressGen2 = '0x62500af05b9238940b62abd8b73584f40da9971a';
 
+// TODO: Maybe network, address, etc. should be set as globals that are used in js below
+
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
   [1, 31],
@@ -72,10 +74,10 @@ App = {
   initWeb3: function() {
     // Is there an injected web3 instance?
     if (typeof web3 !== 'undefined') {
+      $('#metamask-present').show();
       App.web3Provider = web3.currentProvider;
     } else {
-      // If no injected web3 instance is detected, fall back to Ganache
-      App.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:7545');
+      $('#metamask-absent').show();
     }
     web3 = new Web3(App.web3Provider);
 
