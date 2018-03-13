@@ -27,6 +27,8 @@ const monthDays = [
 
 const defaultGasPrice = 21000000000;
 
+const preMetamaskMsg = "You'll now be redirected to Metamask to submit this transaction. Note that it will take some time after submission before the tx appears on the blockchain!"
+
 function metamaskNetIdToNetwork(netId) {
   switch (netId) {
     case "1":
@@ -219,6 +221,8 @@ App = {
     App.contracts.Etherdate.buy(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice}).then((result) => {
       App.displayTxAlert(result['tx']);
     });
+
+    alert(preMetamaskMsg);
   },
 
   initializeWithdrawalPane: async function () {
@@ -237,6 +241,8 @@ App = {
     App.contracts.Etherdate.withdraw({gas: determineGas(gasEstimate), gasPrice: defaultGasPrice}).then((result) => {
       App.displayTxAlert(result['tx']);
     });
+
+    alert(preMetamaskMsg);
   },
 
   displayTxAlert: function (txId) {
