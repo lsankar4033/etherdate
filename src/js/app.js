@@ -1,9 +1,13 @@
-const rinkebyAddressGen1 = '0x5094bd12f227df04905918dc431e822e5d235e64';
-const mainAddressGen1 = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea'; // commit: f659224
+// network -> [sorted list of addresses by generation]
+const contractAddressMap = {
+  'rinkeby': ['0x5094bd12f227df04905918dc431e822e5d235e64', '0x62500af05b9238940b62abd8b73584f40da9971a'],
+  'mainnet': ['0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea']
+};
 
-const rinkebyAddressGen2 = '0x62500af05b9238940b62abd8b73584f40da9971a';
+const contractNetwork = 'rinkeby';
+const contractGeneration = 1;
 
-// TODO: Maybe network, address, etc. should be set as globals that are used in js below
+const contractAddress = contractAddressMap[contractNetwork][contractGeneration];
 
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
@@ -22,6 +26,23 @@ const monthDays = [
 ]
 
 const defaultGasPrice = 21000000000;
+
+function metamaskNetIdToNetwork(netId) {
+  switch (netId) {
+    case "1":
+      return 'mainnet';
+    case "2":
+      return 'morden';
+    case "3":
+      return 'ropsten';
+    case "4":
+      return 'rinkeby';
+    case "42":
+      return 'kovan';
+    default:
+      return 'unknown';
+  }
+}
 
 // NOTE: in the future may want to use intermediate date type
 function coinIdToDateStr(id) {
@@ -62,6 +83,14 @@ function determineGas(gasEstimate) {
   return gasEstimate * 10;
 }
 
+function etherscanTxURL(txId) {
+  if (contractNetwork == 'mainnet') {
+    return `https://etherscan.io/tx/${txId}`
+  } else {
+    return `https://${contractNetwork}.etherscan.io/tx/${txId}`
+  }
+}
+
 App = {
   web3Provider: null,
   contracts: {},
@@ -75,22 +104,32 @@ App = {
     // Is there an injected web3 instance?
     if (typeof web3 !== 'undefined') {
       $('#metamask-present').show();
+
       App.web3Provider = web3.currentProvider;
+      web3 = new Web3(App.web3Provider);
+
+      web3.version.getNetwork((err, netID) => {
+        let metamaskNetwork = metamaskNetIdToNetwork(netID);
+        if (metamaskNetwork === contractNetwork) {
+          return App.initContract();
+        } else {
+          $('#wrong-network-modal').modal();
+          $('span#wrong-network').text(metamaskNetwork);
+          $('span#right-network').text(contractNetwork);
+        }
+      });
     } else {
       $('#metamask-absent').show();
     }
-    web3 = new Web3(App.web3Provider);
-
-    return App.initContract();
   },
 
   initContract: function() {
     // NOTE: This is the version of Etherdate.json that is *live* on the mainnet
-    $.getJSON('Etherdate.json', function(data) {
+    $.getJSON('Etherdate.json', (data) => {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
-      abstractContract.at(rinkebyAddressGen2).then(function (contract) {
+      abstractContract.at(contractAddress).then(function (contract) {
         App.contracts.Etherdate = contract;
 
         // initialize components
@@ -177,28 +216,32 @@ App = {
     newMessage = $('#selected-date input#new-message').val();
 
     const gasEstimate = await App.contracts.Etherdate.buy.estimateGas(coinId, newMessage);
-    const didBuy = await App.contracts.Etherdate.buy(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
-
-    alert("Transaction submitted! It'll take some time for your changes to be reflected on the Ethereum network.");
+    App.contracts.Etherdate.buy(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice}).then((result) => {
+      App.displayTxAlert(result['tx']);
+    });
   },
 
   initializeWithdrawalPane: async function () {
-    App._reloadPendingWithdrawal();
+    App.reloadPendingWithdrawal();
     $('#withdraw-button').click(App.withdraw);
   },
 
-  _reloadPendingWithdrawal: async function () {
+  reloadPendingWithdrawal: async function () {
     const pendingWithdrawal = await App.contracts.Etherdate.getPendingWithdrawal();
     const pendingWithdrawalStr = getEther(pendingWithdrawal.toNumber());
     $('#withdraw span#pending-withdrawal').text(pendingWithdrawalStr);
   },
 
   withdraw: async function (e) {
-    const gasEstimate = await App.contracts.Etherdate.withdraw.estimateGas()
+    let gasEstimate = await App.contracts.Etherdate.withdraw.estimateGas()
+    App.contracts.Etherdate.withdraw({gas: determineGas(gasEstimate), gasPrice: defaultGasPrice}).then((result) => {
+      App.displayTxAlert(result['tx']);
+    });
+  },
 
-    await App.contracts.Etherdate.withdraw({gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
-
-    alert("Transaction submitted! It'll take some time for your changes to be reflected on the Ethereum network.");
+  displayTxAlert: function (txId) {
+    $('#tx-submitted-modal').modal();
+    $('a#tx-submitted-link').attr('href', etherscanTxURL(txId));
   }
 };
 

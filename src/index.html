@@ -25,6 +25,47 @@
 
   </head>
   <body>
+    <div id="wrong-network-modal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4>
+            <strong>Error</strong>: Wrong network
+            </h4>
+          </div>
+
+          <div class="modal-body">
+            <div>
+              Your browser is currently pointing at <span id="wrong-network"></span> and Etherdate is configured for <span id="right-network"></span>.
+            </div>
+
+            <div>
+              Please switch networks and reload the page to use Etherdate!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tx-submitted-modal"  class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4>
+              Transaction submitted!
+            </h4>
+          </div>
+
+          <div class="modal-body">
+            <div>
+              It will take some time for this transaction to get confirmed on the blockchain.
+              You can track its progress <a id="tx-submitted-link">here</a>.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="metamask-absent" class="body" style="display:none;">
       <div class="alert alert-danger" role="alert">
         <div><strong>Not Connected</strong></div>
