@@ -9,6 +9,15 @@ const contractGeneration = 1;
 
 const contractAddress = contractAddressMap[contractNetwork][contractGeneration];
 
+let etherscanNetworkURL;
+if (contractNetwork == 'mainnet') {
+  etherscanNetworkURL = `https://etherscan.io`;
+} else {
+  etherscanNetworkURL = `https://${contractNetwork}.etherscan.io`;
+}
+
+const etherscanContractURL = `${etherscanNetworkURL}/address/${contractAddress}`;
+
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
   [1, 31],
@@ -86,11 +95,7 @@ function determineGas(gasEstimate) {
 }
 
 function etherscanTxURL(txId) {
-  if (contractNetwork == 'mainnet') {
-    return `https://etherscan.io/tx/${txId}`
-  } else {
-    return `https://${contractNetwork}.etherscan.io/tx/${txId}`
-  }
+  return `${etherscanNetworkURL}/tx/${txId}`;
 }
 
 App = {
@@ -98,7 +103,8 @@ App = {
   contracts: {},
 
   init: function() {
-    // Initialization logic?
+    $('.etherscan-address-link').attr('href', etherscanContractURL);
+
     return App.initWeb3();
   },
 
