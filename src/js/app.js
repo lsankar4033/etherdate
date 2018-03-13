@@ -18,6 +18,8 @@ if (contractNetwork == 'mainnet') {
 
 const etherscanContractURL = `${etherscanNetworkURL}/address/${contractAddress}`;
 
+const contractIdentifierStr = `${contractNetwork} gen ${contractGeneration + 1}`;
+
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
   [1, 31],
@@ -104,6 +106,7 @@ App = {
 
   init: function() {
     $('.etherscan-address-link').attr('href', etherscanContractURL);
+    $('#header-contract-identifier').html(contractIdentifierStr);
 
     return App.initWeb3();
   },
