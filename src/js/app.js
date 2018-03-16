@@ -93,7 +93,7 @@ function getWei(ether) {
 }
 
 function determineGas(gasEstimate) {
-  return gasEstimate * 10;
+  return gasEstimate * 20;
 }
 
 function etherscanTxURL(txId) {
