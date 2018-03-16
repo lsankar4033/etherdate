@@ -36,7 +36,7 @@ const monthDays = [
   [12, 31]
 ]
 
-const defaultGasPrice = 21000000000;
+const defaultGasPrice = 6000000000;
 
 const preMetamaskMsg = "You'll now be redirected to Metamask to submit this transaction. Note that it will take some time after submission before the tx appears on the blockchain!"
 
