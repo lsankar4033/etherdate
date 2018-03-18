@@ -1,11 +1,11 @@
 // network -> [sorted list of addresses by generation]
 const contractAddressMap = {
   'rinkeby': ['0x5094bd12f227df04905918dc431e822e5d235e64', '0x62500af05b9238940b62abd8b73584f40da9971a'],
-  'mainnet': ['0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea']
+  'mainnet': ['0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea', '0x269106aF9C3415CF5497FcD4C38762B33b520D05']
 };
 
-const contractNetwork = 'rinkeby';
-const contractGeneration = 1;
+const contractNetwork = 'mainnet';
+const contractGeneration = 2;
 
 const contractAddress = contractAddressMap[contractNetwork][contractGeneration];
 
