@@ -33,7 +33,7 @@ contract Etherdate {
     creator = msg.sender;
   }
 
-  // NOTE: Doesn't include pending withdrawals
+  // NOTE: These are users who owned dates in generation 1
   function insertGen1Data() public onlyCreator {
     _assignCoin(31, 0x183feBd8828a9ac6c70C0e27FbF441b93004fC05, "Vitalik's birthday", 40 finney);
     _assignCoin(365, 0x183feBd8828a9ac6c70C0e27FbF441b93004fC05, "New Year's eve Party Up!", 40 finney);
