@@ -25,161 +25,227 @@
 
   </head>
   <body>
-    <div id="app" class="row">
-      <div id="high-prices" class="col-md-4">
-        <h3> Priciest etherdates </h3>
-
-        <table id="high-prices-table" class="table">
-          <thead>
-            <tr>
-              <th>Date (M/D)</th>
-              <th>Message</th>
-              <th>Current Price (eth)</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-
-      <div id="buy-dates" class="col-md-4">
-        <h3> Buy an etherdate (M/D) </h3>
-
-        <div class="input-group date" id='datetimepicker'>
-          <input type='text' class="form-control" />
-          <span class="input-group-addon">
-            <span class="glyphicon glyphicon-calendar"></span>
-          </span>
-        </div>
-
-        <div id="selected-date">
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Current Owner</label>
-            <div class="col-sm-10">
-              <input type="text" id="owner" readonly class="form-control plaintext">
-            </div>
+    <div id="wrong-network-modal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4>
+            <strong>Error</strong>: Wrong network
+            </h4>
           </div>
 
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Message</label>
-            <div class="col-sm-10">
-              <input type="text" id="message" readonly class="form-control plaintext">
-            </div>
-          </div>
-
-          <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Price (eth)</label>
-            <div class="col-sm-10">
-              <input type="text" id="price" readonly class="form-control plaintext">
-            </div>
-          </div>
-
-          <input id="coin-id" type="hidden">
-          <div id="buy-input" class="row">
-            <div class="col-sm-10">
-              <input id="new-message" type="text" class="form-control plaintext" placeholder="Enter your new message here">
+          <div class="modal-body">
+            <div>
+              Your browser is currently pointing at <span id="wrong-network"></span> and Etherdate is configured for <span id="right-network"></span>.
             </div>
 
-            <div class="col-sm-2">
-              <button id="buy-button" type="button" class="btn btn-primary">Buy</button>
+            <div>
+              Please switch networks and reload the page to use Etherdate!
             </div>
           </div>
         </div>
-      </div>
-
-      <div id="withdraw" class="col-md-4">
-        <h3> Withdraw ether </h3>
-
-        <p class="text-left"><span id="pending-withdrawal"></span> eth available</p>
-
-        <button id="withdraw-button" type="button" class="btn btn-success">Withdraw</button>
-
       </div>
     </div>
 
-    <div id="description">
-      <h3> What is this? </h3>
-      <p>
+    <div id="tx-submitted-modal"  class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4>
+              Transaction submitted!
+            </h4>
+          </div>
+
+          <div class="modal-body">
+            <div>
+              It will take some time for this transaction to get confirmed on the blockchain.
+              You can track its progress <a id="tx-submitted-link">here</a>. Once the tx is confirmed on the blockchain,
+              reload this page!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="metamask-absent" class="body" style="display:none;">
+      <div class="alert alert-danger" role="alert">
+        <div><strong>Not Connected</strong></div>
+
+        <div>To access Etherdate from a web browser, please install <a href="https://metamask.io/">Metamask</a> and reload this page.</div>
+      </div>
+    </div>
+
+    <div id="metamask-present" class="body" style="display:none;">
+
+      <h2>
+        <strong>
+        Etherdate: <span id="header-contract-identifier"></span>
+        </strong>
+      </h2>
+
+      <div id="app" class="row">
+        <div id="high-prices" class="col-md-4">
+          <h3> Priciest etherdates </h3>
+
+          <table id="high-prices-table" class="table">
+            <thead>
+              <tr>
+                <th>Date (M/D)</th>
+                <th>Message</th>
+                <th>Current Price (eth)</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="buy-dates" class="col-md-4">
+          <h3> Buy an etherdate (M/D) </h3>
+
+          <div class="input-group date" id='datetimepicker'>
+            <input type='text' class="form-control" />
+            <span class="input-group-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
+
+          <div id="selected-date">
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Current Owner</label>
+              <div class="col-sm-10">
+                <input type="text" id="owner" readonly class="form-control plaintext">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Message</label>
+              <div class="col-sm-10">
+                <input type="text" id="message" readonly class="form-control plaintext">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Price (eth)</label>
+              <div class="col-sm-10">
+                <input type="text" id="price" readonly class="form-control plaintext">
+              </div>
+            </div>
+
+            <input id="coin-id" type="hidden">
+            <div id="buy-input" class="row">
+              <div class="col-sm-10">
+                <input id="new-message" type="text" class="form-control plaintext" placeholder="Enter your new message here">
+              </div>
+
+              <div class="col-sm-2">
+                <button id="buy-button" type="button" class="btn btn-primary">Buy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="withdraw" class="col-md-4">
+          <h3> Withdraw ether </h3>
+
+          <p class="text-left"><span id="pending-withdrawal"></span> eth available</p>
+
+          <button id="withdraw-button" type="button" class="btn btn-success">Withdraw</button>
+
+        </div>
+      </div>
+
+      <div id="description">
+        <h3> What is this? </h3>
+        <p>
         Etherdate is a smart contract living on the Ethereum blockchain that allows anyone to 'buy' a day of the
         year and associate a message with it. There's only one etherdate for each (Gregorian) calendar date
         (1/1 through 12/31, incl. 2/29).  To own an etherdate and post a message with it, you must buy it from
         the current owner.
-      </p>
+        </p>
 
-      <p>
+        <p>
         Date prices increase on a fixed schedule as described below, under the heading 'How does pricing work?'
-      </p>
+        </p>
 
-      <p>
-        Source code for the contract is <a href="https://gist.github.com/lsankar4033/6612427117e29393f06f4f600600a353">here</a>
-        (note that contract and methods refer to 'birthdays' instead of 'dates'. When I originally wrote/deployed it, I was
-        planning on making this birthday-specific). Feel free to deploy your own version if you'd like.
-      </p>
+        <p>
+        Source code for the contract is <a href="https://gist.github.com/lsankar4033/243ddb9c2c3f1ead7e41a7be1473fcaa">here</a>.
+        </p>
 
-      <p>
-        The contract itself lives <a href="https://etherscan.io/address/0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea">here</a>.
-      </p>
+        <p>
+        The contract itself lives <a class="etherscan-address-link">here</a>. You can view any pending transactions there.
+        </p>
 
-      <h3> Why? </h3>
-      <p>
+        <h3> Why? </h3>
+        <p>
         Mostly just curiosity.
-      </p>
+        </p>
 
-      <p>
+        <p>
         Blockchains allow individuals to organize around memes quickly. Individual days of the year are the source
         of many memes that are an important part of our collective consciousness. Some examples are holidays,
         birthdays of notable people, and dates of significance for some organization (i.e. a nation).
-      </p>
-      <p>
+        </p>
+        <p>
         I think these sorts of memes are the source of massive cultural value. This project is an experiment to
         see what sorts of memes form around dates among the participants in the Ethereum blockchain.
-      </p>
-      <h3> How does pricing work? </h3>
-      <p>
+        </p>
+        <h3> How does pricing work? </h3>
+        <p>
         Each date starts priced at 0.02 eth. Each time a date is bought, its price increases according to the
         following schedule:
-      </p>
-      <table class='table'>
-        <tbody>
-          <tr>
-            <td> 0.02 eth -> 0.32 eth </td>
-            <td> 2x </td>
-          </tr>
+        </p>
+        <table class='table'>
+          <tbody>
+            <tr>
+              <td> 0.02 eth -> 0.32 eth </td>
+              <td> 2x </td>
+            </tr>
 
-          <tr>
-            <td> 0.32 eth -> 1.62 eth </td>
-            <td> 1.5x </td>
-          </tr>
+            <tr>
+              <td> 0.32 eth -> 1.62 eth </td>
+              <td> 1.5x </td>
+            </tr>
 
-          <tr>
-            <td> 1.62 eth -> the moon </td>
-            <td> 1.1x </td>
-          </tr>
-        </tbody>
-      </table>
-      <p>
+            <tr>
+              <td> 1.62 eth -> the moon </td>
+              <td> 1.1x </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
         Of the price paid, 1% is absorbed as commission for keeping this site running, and a nominal amount
         is used to withdraw the eth from the contract (less than 0.005 eth at last count). The rest goes to the
         previous date owner.
-      </p>
-      <h3> How do I participate? </h3>
-      <p>
+        </p>
+        <h3> How do I participate? </h3>
+        <p>
         For most users, the easiest way is via a web browser and the <a href="https://metamask.io/">Metamask</a>
         browser extension. Once you've transferred eth to your Metamask wallet, use the date selector above to
-        select a date, enter your message, and buy it. The top 10 highest-priced dates show up in the 'Hall of Fame'
+        select a date, enter your message, and buy it. The top 10 highest-priced dates show up in the 'Priciest etherdates'
         above along with their messages.
-      </p>
+        </p>
 
-      <p>
-        Note that it will take some time for your transaction to be finalized in the Ethereum network.
-      </p>
+        <p>
+        Note that it will take some time for your actions to be reflected in the Ethereum blockchain. If your
+        transaction is taking a long time, you can track its progress <a class="etherscan-address-link">here</a>.
+        </p>
 
-      <h3> Are dates worth anything? </h3>
-      <p>
+        <h3> Are dates worth anything? </h3>
+        <p>
         Probably not, in all likelihood. If you think that a date has demand (and will be bought up) because it
         represents something people care about, go ahead and buy it, but realize that this is all for fun. Please
         don't spend money you can't afford to lose.
-      </p>
+        </p>
+
+        <h3> Who made this? </h3>
+        <p>
+        A curious programmer. You can find out more about me on my <a href="http://lakshmansankar.com/">personal site</a>.
+        </p>
+        <p>
+        Feel free to get in touch if you're interested in similar things!
+        </p>
+      </div>
     </div>
 
     <!-- bootstrap+jquery+popper+moment -->

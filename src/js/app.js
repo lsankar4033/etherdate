@@ -1,7 +1,24 @@
-// TODO: Put these in a config that's determined by env!
-const devAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
-const rinkebyAddress = '0x5094bd12f227df04905918dc431e822e5d235e64';
-const mainAddress = '0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea'; // commit: f659224
+// network -> [sorted list of addresses by generation]
+const contractAddressMap = {
+  'rinkeby': ['0x5094bd12f227df04905918dc431e822e5d235e64', '0x62500af05b9238940b62abd8b73584f40da9971a'],
+  'mainnet': ['0x77daea587e4cdf2bfa7acaba72f01b3a97d108ea']
+};
+
+const contractNetwork = 'rinkeby';
+const contractGeneration = 1;
+
+const contractAddress = contractAddressMap[contractNetwork][contractGeneration];
+
+let etherscanNetworkURL;
+if (contractNetwork == 'mainnet') {
+  etherscanNetworkURL = `https://etherscan.io`;
+} else {
+  etherscanNetworkURL = `https://${contractNetwork}.etherscan.io`;
+}
+
+const etherscanContractURL = `${etherscanNetworkURL}/address/${contractAddress}`;
+
+const contractIdentifierStr = `${contractNetwork} gen ${contractGeneration + 1}`;
 
 // NOTE: May want to move all date handling logic to its own file...
 const monthDays = [
@@ -19,7 +36,26 @@ const monthDays = [
   [12, 31]
 ]
 
-const defaultGasPrice = 21000000000;
+const defaultGasPrice = 6000000000;
+
+const preMetamaskMsg = "You'll now be redirected to Metamask to submit this transaction. Note that it will take some time after submission before the tx appears on the blockchain!"
+
+function metamaskNetIdToNetwork(netId) {
+  switch (netId) {
+    case "1":
+      return 'mainnet';
+    case "2":
+      return 'morden';
+    case "3":
+      return 'ropsten';
+    case "4":
+      return 'rinkeby';
+    case "42":
+      return 'kovan';
+    default:
+      return 'unknown';
+  }
+}
 
 // NOTE: in the future may want to use intermediate date type
 function coinIdToDateStr(id) {
@@ -57,7 +93,11 @@ function getWei(ether) {
 }
 
 function determineGas(gasEstimate) {
-  return gasEstimate * 10;
+  return gasEstimate * 20;
+}
+
+function etherscanTxURL(txId) {
+  return `${etherscanNetworkURL}/tx/${txId}`;
 }
 
 App = {
@@ -65,30 +105,42 @@ App = {
   contracts: {},
 
   init: function() {
-    // Initialization logic?
+    $('.etherscan-address-link').attr('href', etherscanContractURL);
+    $('#header-contract-identifier').html(contractIdentifierStr);
+
     return App.initWeb3();
   },
 
   initWeb3: function() {
     // Is there an injected web3 instance?
     if (typeof web3 !== 'undefined') {
-      App.web3Provider = web3.currentProvider;
-    } else {
-      // If no injected web3 instance is detected, fall back to Ganache
-      App.web3Provider = new Web3.providers.HttpProvider('http://127.0.0.1:7545');
-    }
-    web3 = new Web3(App.web3Provider);
+      $('#metamask-present').show();
 
-    return App.initContract();
+      App.web3Provider = web3.currentProvider;
+      web3 = new Web3(App.web3Provider);
+
+      web3.version.getNetwork((err, netID) => {
+        let metamaskNetwork = metamaskNetIdToNetwork(netID);
+        if (metamaskNetwork === contractNetwork) {
+          return App.initContract();
+        } else {
+          $('#wrong-network-modal').modal();
+          $('span#wrong-network').text(metamaskNetwork);
+          $('span#right-network').text(contractNetwork);
+        }
+      });
+    } else {
+      $('#metamask-absent').show();
+    }
   },
 
   initContract: function() {
     // NOTE: This is the version of Etherdate.json that is *live* on the mainnet
-    $.getJSON('Etherdate.json', function(data) {
+    $.getJSON('Etherdate.json', (data) => {
       // Get the necessary contract artifact file and instantiate it with truffle-contract
       const abstractContract = TruffleContract(data);
       abstractContract.setProvider(App.web3Provider);
-      abstractContract.at(devAddress).then(function (contract) {
+      abstractContract.at(contractAddress).then(function (contract) {
         App.contracts.Etherdate = contract;
 
         // initialize components
@@ -175,28 +227,36 @@ App = {
     newMessage = $('#selected-date input#new-message').val();
 
     const gasEstimate = await App.contracts.Etherdate.buy.estimateGas(coinId, newMessage);
-    const didBuy = await App.contracts.Etherdate.buy(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
+    App.contracts.Etherdate.buy(coinId, newMessage, {value: price, gas: determineGas(gasEstimate), gasPrice: defaultGasPrice}).then((result) => {
+      App.displayTxAlert(result['tx']);
+    });
 
-    alert("Transaction submitted! It'll take some time for your changes to be reflected on the Ethereum network.");
+    alert(preMetamaskMsg);
   },
 
   initializeWithdrawalPane: async function () {
-    App._reloadPendingWithdrawal();
+    App.reloadPendingWithdrawal();
     $('#withdraw-button').click(App.withdraw);
   },
 
-  _reloadPendingWithdrawal: async function () {
+  reloadPendingWithdrawal: async function () {
     const pendingWithdrawal = await App.contracts.Etherdate.getPendingWithdrawal();
     const pendingWithdrawalStr = getEther(pendingWithdrawal.toNumber());
     $('#withdraw span#pending-withdrawal').text(pendingWithdrawalStr);
   },
 
   withdraw: async function (e) {
-    const gasEstimate = await App.contracts.Etherdate.withdraw.estimateGas()
+    let gasEstimate = await App.contracts.Etherdate.withdraw.estimateGas()
+    App.contracts.Etherdate.withdraw({gas: determineGas(gasEstimate), gasPrice: defaultGasPrice}).then((result) => {
+      App.displayTxAlert(result['tx']);
+    });
 
-    await App.contracts.Etherdate.withdraw({gas: determineGas(gasEstimate), gasPrice: defaultGasPrice});
+    alert(preMetamaskMsg);
+  },
 
-    alert("Transaction submitted! It'll take some time for your changes to be reflected on the Ethereum network.");
+  displayTxAlert: function (txId) {
+    $('#tx-submitted-modal').modal();
+    $('a#tx-submitted-link').attr('href', etherscanTxURL(txId));
   }
 };
 

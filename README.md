@@ -1,6 +1,9 @@
 # TODO
-- things to include in V2
-  - manual testing locally and on testnet
-  - update index.html
-    - refer to github
-    - update gist reference
+- things to include in v2 mainnet launch
+  - point to latest gen address based on detected metamask network
+- promote
+  - rarebits
+  - opensea
+  - stateofthedapps
+  - dappradar
+  - reddit
