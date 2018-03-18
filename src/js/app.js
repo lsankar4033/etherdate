@@ -5,7 +5,7 @@ const contractAddressMap = {
 };
 
 const contractNetwork = 'mainnet';
-const contractGeneration = 2;
+const contractGeneration = 1;
 
 const contractAddress = contractAddressMap[contractNetwork][contractGeneration];
 
